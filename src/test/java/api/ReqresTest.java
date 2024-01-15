@@ -123,4 +123,25 @@ public class ReqresTest {
 
         Assert.assertEquals("Missing password", unsuccessReg.getError());
     }
+
+    @Test
+    public void sortedYearsTest() {
+        Specification.installSpecification(Specification.requestSpecification(URL), Specification.responseSpecification200());
+
+        //in get()  method we mention from what address we have to get data
+
+        List<ColorsData> colorsDataList = given()
+                .when()
+                .get("api/unknown")
+                .then().log().all()
+                .extract().body().jsonPath().getList("data", ColorsData.class);
+
+        List<Integer> years = colorsDataList.stream().map(ColorsData::getYear).collect(Collectors.toList());
+        List<Integer> sortedYears = years.stream().sorted().collect(Collectors.toList());
+
+        Assert.assertEquals(sortedYears, years);
+
+        System.out.println(years);
+        System.out.println(sortedYears);
+    }
 }
