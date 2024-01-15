@@ -172,6 +172,5 @@ public class ReqresTest {
         String regex = "(.{5})$";
         String currentTime = Clock.systemUTC().instant().toString().replaceAll(regex,"");
         Assert.assertEquals(currentTime, response.getUpdatedAt().replaceAll(regex, ""));
-
     }
 }
