@@ -3,7 +3,9 @@ package api;
 import io.restassured.http.ContentType;
 import org.junit.Assert;
 import org.junit.Test;
+import org.seleniumhq.jetty9.server.Authentication;
 
+import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -143,5 +145,33 @@ public class ReqresTest {
 
         System.out.println(years);
         System.out.println(sortedYears);
+    }
+
+    @Test
+    public void deleteUserTest() {
+        Specification.installSpecification(Specification.requestSpecification(URL), Specification.responseSpecUnique(204));
+
+        given()
+                .when()
+                .delete("/api/users/2")
+                .then().log().all();
+    }
+
+    @Test
+    public void timeTest() {
+        Specification.installSpecification(Specification.requestSpecification(URL), Specification.responseSpecUnique(200));
+
+        UserTime user = new UserTime("morpheus", "zion resident");
+        UserTimeResponse response = given()
+                .body(user)
+                .when()
+                .put("/api/users/2")
+                .then().log().all()
+                .extract().as(UserTimeResponse.class);
+
+        String regex = "(.{5})$";
+        String currentTime = Clock.systemUTC().instant().toString().replaceAll(regex,"");
+        Assert.assertEquals(currentTime, response.getUpdatedAt().replaceAll(regex, ""));
+
     }
 }
