@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
@@ -82,5 +83,44 @@ public class ReqresTest {
         }
 
 
+    }
+
+    @Test
+    public void successfulRegTest() {
+       Specification.installSpecification(Specification.requestSpecification(URL), Specification.responseSpecification200());
+       Integer id = 4;
+       String token = "QpwL5tke4Pnpja7X4";
+
+       Registr user = new Registr("eve.holt@reqres.in", "pistol");
+       SuccessReg successReg = given()
+               .body(user)
+               .when()
+               .post("api/register")
+               .then().log().all()
+               .extract().as(SuccessReg.class);
+
+       Assert.assertNotNull(successReg.getId());
+       Assert.assertNotNull(successReg.getToken());
+
+
+       Assert.assertEquals(id, successReg.getId());
+       Assert.assertEquals(token, successReg.getToken());
+
+    }
+
+    @Test
+    public void unSuccessfulTest() {
+        Specification.installSpecification(Specification.requestSpecification(URL), Specification.responseSpecification400());
+
+        Registr user  = new Registr("sydney@fife", "");
+
+        UnsuccessReg unsuccessReg = given()
+                .when()
+                .body(user)
+                .post("api/register")
+                .then().log().all()
+                .extract().as(UnsuccessReg.class);
+
+        Assert.assertEquals("Missing password", unsuccessReg.getError());
     }
 }
