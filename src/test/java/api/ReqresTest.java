@@ -173,4 +173,6 @@ public class ReqresTest {
         String currentTime = Clock.systemUTC().instant().toString().replaceAll(regex,"");
         Assert.assertEquals(currentTime, response.getUpdatedAt().replaceAll(regex, ""));
     }
+
+
 }
